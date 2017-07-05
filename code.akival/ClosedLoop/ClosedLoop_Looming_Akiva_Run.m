@@ -21,15 +21,18 @@ for t = 1:T
   [ddt_MTheta, ddt_MRadius] = getMaleVelocity();
 
   FTheta = d.tAng(t);
-  
+
   noise = 0;
   rate = 1;
   dt = 1;
   minRadius = min(tDis);
   maxRadius = max(tDis);
+
+  %--------( Running the control system )------
   FRadius = bounded(minRadius, ...
     MRadius + dt*rate*ddt_FTheta/FRadius + noise, ...
     maxRadius);
+  %--------------------------------------------
 
   results.Fems(t, 1) = FRadius;
   results.Fems(t, 2) = FTheta;
