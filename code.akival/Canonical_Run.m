@@ -12,50 +12,74 @@ disp(['TLEN IS:']);
 disp(d.tLen);
 
 % A generalized drawing scheme:
-%   d.stimdatas 
-% is a struct-array. 
+%   d.stimdatas
+% is a struct-array.
 % each index in the struct array is a struct
 % with the following fields
-%  .colors: (T [0,255]) or (T [r g b a]) matrix 
+%  .colors: (T [0,255]) or (T [r g b a]) matrix
 %  .bbox: (T nVertices [x y]) matrix
 %  .centers: (T [x y]) matrix
 % Because of the coordinate transform that needs to happen,
-% if you want to draw a circle or any other shape you need to 
-% make it a polygon beforehand. 
-% To run any stimulus we just perform a lookup for each 
+% if you want to draw a circle or any other shape you need to
+% make it a polygon beforehand.
+% To run any stimulus we just perform a lookup for each
 % key at time t
 % Make sure all matrices are (T ** [x y]). Otherwise it wont
 % work properly
 
+% INTELLIGENCE:
+% CIRCLES: If stimDatas contains only one point then
+%   assume we are drawing circle with radius specified
+%   by the distance between that single point and the centers
+% ELLIPSES: If stimDatas only has two points then read them
+%   as the foci of an ellipse centered at the given center points
+
 T = d.tLen;
 disp(T);
-K = length(d.stimDatas);
-
+K = length(d.stimDatas)
+disp('Beginning plotting')
+disp([num2str(T)])
 % The number of points
 for t = 1:T
   %% Plotting each individual shape
-  disp(['Frame ', num2str(i)]);
+%   disp(['Frame ', num2str(t)]);
   for j=1:K
-    stimj = d.stimDatas(j);
-    bboxtj =  stimj.bbox(t,:,:);
-    bboxtj = squeeze(bboxtj);
-    colortj = stimj.colors(t,:);
-    Screen('FillPoly', d.win, colortj,bboxtj,1);
-
-  Screen('DrawingFinished', d.win);
+    stim = d.stimDatas(j);
+    [T, nEdges, D] = size(stim.bbox);
+    switch nEdges
+        case {1,2}
+          center = stim.centers(t,:);
+          radius = stim.bbox(t, 1,:);
+          x = center(1);
+          y = center(2);
+          R = radius;
+          rect = [x-R, y+R, x+R, y-R];
+          Screen('FillOval', d.win,rect);
+        otherwise
+          disp(['Drawing Polygon']);  
+          bboxtj =  stim.bbox(t,:,:);
+          bboxtj = double(squeeze(bboxtj))
+          colortj = stim.colors(t,:);
+          Screen('FillPoly', d.win, colortj,bboxtj);
+    end 
   end
 
+  Screen('DrawingFinished', d.win);
+  
   %% Flipping buffer to the screen
   [d.vblT] = Screen('Flip', d.win, d.vblT+0.5*d.ifi);
-%    imageArray = Screen('GetImage', d.win, d.Rect);
-%    imwrite(imageArray, ['tmpimg' num2str(i) '.png'])
-   
-  d.frmCnt = i;
-  d.fTims(i,1) = d.vblT;
 
+  if isfield(d, 'toSave')
+    if d.toSave == true
+      imageArray = Screen('GetImage', d.win, d.Rect);
+      imwrite(imageArray, ['tmpimg' num2str(t) '.png'])
+    end
+  end
+  d.frmCnt = t;
+  d.fTims(t,1) = d.vblT;
 end
-% close(vComp);
+
+close(vComp);
 save EndPlayback i;
 
 end
-
