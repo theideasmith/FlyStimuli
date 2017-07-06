@@ -1,7 +1,4 @@
-%% ClosedLoop Looming
-%{
-import notes/closedlooplooming.md
-%}
+%% NaturalDotSquare
 
 thisfilename = mfilename('fullpath');
 
@@ -35,13 +32,15 @@ else
     % It's very easy to compute projections
     [corrected] = dotCorrectedPositionalData(P_M, P_F_edges, V, n);
 
-    % Pixels are integers
-    corrected = int16(corrected(:,:,[1 3]));
+    % Psychtoolbox takes doubles as pixel
+    % positions, not integers as would be expected
+    % for a sensibly designed piece of software
+    corrected = double(corrected(:,:,[1 3]));
     colors = zeros(T,3);
 
-    stimDatas(1).colors = colors;
+    stimDatas(1).colors  = colors;
     stimDatas(1).centers = corrected(:,1,:);
-    stimDatas(1).bbox =  corrected(:,2:5,:);
+    stimDatas(1).bbox    =  corrected(:,2:5,:);
     d.stimDatas = stimDatas;
     d.tAng = tAng;
     d.tDis = tDis;

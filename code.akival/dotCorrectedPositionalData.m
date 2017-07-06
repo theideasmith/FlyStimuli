@@ -10,5 +10,10 @@ function corrected = dotCorrectedPositionalData(pObserver, pSubject, V, n)
 [nSbjs, T, D] = size(pSubject);
 corrected = zeros(T, nSbjs, D); 
 for i=1:nSbjs
-  corrected(:,i,:) = round(planarProjection(pObserver, squeeze(pSubject(i,:,:)), V, n));
+  if T > 1
+    res = round(planarProjection(pObserver, squeeze(pSubject(i,:,:)), V, n));
+  else 
+    res = round(planarProjection(pObserver, squeeze(pSubject(i,:,:))', V, n));
+  end
+  corrected(:,i,:) = res;
 end

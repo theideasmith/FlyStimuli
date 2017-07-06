@@ -5,7 +5,7 @@ import notes/closedlooplooming.md
 
 thisfilename = mfilename('fullpath');
 
-if existsStimulusDataCache(thisfilename)
+if false %existsStimulusDataCache(thisfilename)
     loaded = loadStimulusData(thisfilename);
     d.tAng = loaded.tAng;
     d.tDis = loaded.tDis;
@@ -36,12 +36,13 @@ else
     [corrected] = dotCorrectedPositionalData(P_M, P_F_edges, V, n);
 
     % Pixels are integers
-    corrected = int16(corrected(:,:,[1 3]));
+    corrected = double(corrected(:,:,[1 3]));
 
     % The important part is here where we change
     % the color
-    colors = zeros(T,3);
-    colors(:,:) = [128, 128, 128];
+    colors = repmat([50, 50, 50], T, 1);
+
+%   colors = repmat([0, 0, 0], T, 1);
 
     stimDatas(1).colors = colors;
     stimDatas(1).centers = corrected(:,1,:);
@@ -56,4 +57,3 @@ else
     cacheStimulusData(thisfilename, d);
 end
 
-clear light;

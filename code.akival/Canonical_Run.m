@@ -56,11 +56,10 @@ for t = 1:T
           rect = [x-R, y+R, x+R, y-R];
           Screen('FillOval', d.win,rect);
         otherwise
-          disp(['Drawing Polygon']);  
           bboxtj =  stim.bbox(t,:,:);
-          bboxtj = double(squeeze(bboxtj))
+          bboxtj = double(squeeze(bboxtj));
           colortj = stim.colors(t,:);
-          Screen('FillPoly', d.win, colortj,bboxtj);
+          Screen('FillPoly', d.win, colortj, bboxtj);
     end 
   end
 

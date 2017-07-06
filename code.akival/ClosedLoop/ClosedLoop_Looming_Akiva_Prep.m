@@ -1,7 +1,5 @@
-%% NaturalDot_Prep
+%% Closedloop Prep
 thisfilename = mfilename('fullpath');
-
-
 
 if existsStimulusDataCache(thisfilename)
     loaded = loadStimulusData(thisfilename);
@@ -11,7 +9,7 @@ if existsStimulusDataCache(thisfilename)
 else
     % All the positional projection we do live
     [tAng, tDis] = getAngDis(d);
-    [M, F, V, n] = absolutePositions(d, tAng, tDis;
+    [M, F, V, n] = absolutePositions(d, tAng, tDis);
     d.M = M;
     d.F = F;
     d.planeCenter = V;
@@ -21,5 +19,3 @@ else
     d.vblT = 0;
     cacheStimulusData(thisfilename, d);
 end
-
-clear light;

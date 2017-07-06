@@ -92,14 +92,5 @@ tAng(abs(tAng)>AngLim) = [];
 % Use a loess filter to smooth out the data
 tAng = smooth(tAng, 0.00004, 'loess');
 tDis = smooth(tDis, 0.00004, 'loess');
-% % Random number initialization
-rng shuffle
-% sPnt is the start point. I dont get why it's randomized
-sPnt = max([1 round(rand(1)*length(tAng)-d.tLen)]);
-% Starting points
-t1 = sPnt;
-t2 = sPnt+d.tLen-1;
-tAng = tAng(t1:t2);
-tDis = tDis(t1:t2);
 
 end
