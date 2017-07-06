@@ -1,7 +1,7 @@
 %% ClosedLoop Looming
-%{
-import notes/closedlooplooming.md
-%}
+
+% import notes/closedlooplooming.md
+
 
 thisfilename = mfilename('fullpath');
 
