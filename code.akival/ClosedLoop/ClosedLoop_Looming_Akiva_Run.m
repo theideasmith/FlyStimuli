@@ -6,7 +6,7 @@ results = getClosedLoopStruct(d);
 
 for t = 1:T
   % This does all the heavy lifting for us
-  bbox = ClosedLoopKit(results, t);
+  [results, bbox] = ClosedLoopKit(results, t);
   Screen('FillPoly', d.win, [0 0 0],bbox);
   Screen('DrawingFinished', d.win);
 
@@ -25,4 +25,4 @@ end
 
 close(vComp);
 save EndPlayback i;
-% Write results to a file. Must figure out to where. 
+% Write results to a file. Must figure out to where.

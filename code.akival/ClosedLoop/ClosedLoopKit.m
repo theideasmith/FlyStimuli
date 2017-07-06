@@ -1,30 +1,33 @@
-function bbox = ClosedLoopKit(closedloopdata, t)
-  d = closedloopdata.stimdata;
+function [outclosedloopdata, bbox] = ClosedLoopKit(inclosedloopdata, t)
+  d = inclosedloopdata.stimdata;
   tDis = d.tDis;
   tAng = d.tAng;
 
- 
   [ddt_MRadius, ddt_MTheta] = getMaleVelocity();
-
+  ddt_MRadius = -2*d.mm2pix;
   FTheta = tAng(t);
   noise = 0;
   rate = 1;
-  dt = 1;
+  dt = 1/144;
   minRadius = min(tDis);
   maxRadius = max(tDis);
 
   %--------( Running the control system )------
-  closedloopdata.FRadius = bounded(...
+  inclosedloopdata.FRadius = bounded(...
     minRadius, ...
-    closedloopdata.FRadius + dt*rate*ddt_MTheta/closedloopdata.FRadius + noise, ...
+    inclosedloopdata.FRadius + dt*rate*ddt_MRadius + noise, ...
     maxRadius);
   %--------------------------------------------
 
+  disp(inclosedloopdata.FRadius );
 
-  closedloopdata.Fems(t, 1) = closedloopdata.FRadius;
-  closedloopdata.Fems(t, 2) = FTheta;
+  inclosedloopdata.Fems(t, 1) = inclosedloopdata.FRadius;
+  inclosedloopdata.Fems(t, 2) = FTheta;
 
-  [M, F, V, n] = absolutePositions(d, FTheta, closedloopdata.FRadius);
+  inclosedloopdata.Mals(t, 1) = inclosedloopdata.FRadius;
+  inclosedloopdata.Mals(t, 2) = FTheta;
+
+  [M, F, V, n] = absolutePositions(d, FTheta, inclosedloopdata.FRadius);
   % This is why the geometrical algorithm is so cool
   bBoxPixOffs = 0.5*d.mm2pix;
 
@@ -44,5 +47,5 @@ function bbox = ClosedLoopKit(closedloopdata, t)
   [F_edges_corrected] = dotCorrectedPositionalData(M, F_edges, V, n);
 
   bbox =  squeeze(F_edges_corrected(1,2:5,[1 3]));
-
+  outclosedloopdata = inclosedloopdata;
 end

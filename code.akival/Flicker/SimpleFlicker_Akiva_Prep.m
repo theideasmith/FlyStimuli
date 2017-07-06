@@ -41,10 +41,23 @@ else
     % The important part is here
     % we just create a mask
     colors = zeros(T,3);
-    
-    % TODO: change this
-    lightsoff = ones(T, 3);
-    colors = colors(~lightsoff);
+
+    %% Computing flicker without stochastic flicker lengths
+    TOn = 5*144; %5s on
+    TsmallOff = int16(0.035*144);%35ms
+    TlargeOff = int16(0.470*144);%
+    Tperiod = TOn + TsmallOff + TOn + TlargeOff + TOn;
+
+    cycs = floor(T/Tperiod);
+    Rcycs = mod(T, Tperiod);
+    period = [ones(TOn), zeros(TsmallOff), ones(TOn), zeros(TlargeOff), ones(TOn)];
+    lightson = zeros(T);
+
+    lightson(1:(Tperiod*cycs)) = repmat(period, 1,cycs);
+    lightson((Tperiod*cycs+1):(Tperiod*cycs+1+Rcycs)) = period(1:Rcycs);
+    colors = colors(lightson);
+
+    %% Setting final variables
 
     stimDatas(1).colors = colors;
     stimDatas(1).centers = corrected(:,1,:);
